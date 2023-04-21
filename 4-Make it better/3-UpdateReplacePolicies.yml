@@ -2,18 +2,55 @@
 # UpdateReplacePolicy supports --> Delete/Retain/Snapshot
 # Ref: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-updatereplacepolicy.html
 
----
-AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Cloudformation template to create EC2 instance with parameteres'
+#---
+#AWSTemplateFormatVersion: '2010-09-09'
+#Description: 'Cloudformation template to create EC2 instance with parameteres'
 
+#Parameters:
+#  BucketName:
+#    Type: String
+
+#Resources: 
+#  S3Bucket:
+#    Type: AWS::S3::Bucket
+#    Properties:
+#      BucketName: !Ref BucketName
+#    DeletionPolicy: Retain
+#    UpdateReplacePolicy: Retain
+
+
+# USED THE CODE BELLOW FOR YOUR DEMO. CREATE AND RDS INSTANCE AND LATER UPDATE THE NAME OF YOUR RDS INSTANCD THEN, GET INSIDE THE RDS INSTANCE, YOU WILL SEE THST A NEW
+# RDS INSTANCD WILL BE CREATED FIRST WITH THE UPDATED NAME. The old rds instance will not be deleted because of UpdateReplacementPolicy that was specified in the code.
+
+
+AWSTemplateFormatVersion: 2010-09-09
+Description: creating a DB instance for storing of
 Parameters:
-  BucketName:
+  DBInstanceIdentifier:
     Type: String
-
-Resources: 
-  S3Bucket:
-    Type: AWS::S3::Bucket
+  AllocatedStorage:
+    Type: Number
+  MasterUsername:
+    Type: String
+  MasterUserPassword:
+    Type: String
+    NoEcho: true  
+  DBInstanceClass:
+    Type: String
+    Default: db.t2.micro
+    AllowedValues:
+      - db.t2.micro
+      - db.t2.nano
+      - db.t3.large
+Resources:
+  MyDBIstance:
+    Type: 'AWS::RDS::DBInstance'
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Retain                                
     Properties:
-      BucketName: !Ref BucketName
-    DeletionPolicy: Retain
-    UpdateReplacePolicy: Retain
+      DBInstanceIdentifier: !Ref DBInstanceIdentifier
+      AllocatedStorage: !Ref AllocatedStorage
+      DBInstanceClass: !Ref DBInstanceClass
+      Engine: MySQL
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Ref MasterUserPassword
